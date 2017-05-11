@@ -1,0 +1,9 @@
+link,a,b,-1
+link,a,c,4
+link,b,c,3
+link,b,d,2
+link,b,e,2
+node,c
+link,d,b,1
+link,d,c,5
+link,e,d,-3
