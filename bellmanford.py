@@ -36,7 +36,6 @@ def bellman_ford(graph, source):
     for u in graph:
         for v in graph[u]:
             if d[v] < d[u] + graph[u][v]:
-                print (u,v,d[v],d[u]+graph[u][v])
                 negative_cycles = True
 
     return d, p, negative_cycles

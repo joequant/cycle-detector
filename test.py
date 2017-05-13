@@ -45,7 +45,6 @@ with open(sys.argv[1], 'r') as csvfile:
             add_link(f,t,-v)
             add_link(t,f,-v)
 
-print(graph)
 for node in origins:
     d, p, negative_cycles = bellmanford.bellman_ford(graph, node)
     print (d, p, negative_cycles)
