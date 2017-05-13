@@ -46,6 +46,7 @@ def bellman_ford(graph, source):
         my_list=[]
         while True:
             if j in my_list:
+                my_list.append(j)
                 break
             my_list.append(j)
             j = p[j]

@@ -49,4 +49,4 @@ with open(sys.argv[1], 'r') as csvfile:
 for node in origins:
     d, p, negative_cycles, negative_cycle_lists = \
        bellmanford.bellman_ford(graph, node)
-    print (d, p, negative_cycles, negative_cycle_lists)
+    [ print (" -> ".join(i)) for i in negative_cycle_lists ]
