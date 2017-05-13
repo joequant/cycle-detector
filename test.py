@@ -4,6 +4,7 @@ import csv
 import sys
 import math
 graph = {}
+origins = []
 
 def add_link(f,t,v):
     if f not in graph:
@@ -18,6 +19,9 @@ with open(sys.argv[1], 'r') as csvfile:
         format = row[0]
         if row[0][0] == '#':
             continue
+        if format == 'origin':
+            f = row[1]
+            origins.append(f)
         if format == 'link':
             f = row[1]
             t = row[2]
@@ -32,15 +36,16 @@ with open(sys.argv[1], 'r') as csvfile:
             t = row[2]
             b = math.log(float(row[3]))
             a = math.log(float(row[4]))
-            add_link(f,t,-b)
-            add_link(t,f,a)
+            add_link(f,t,b)
+            add_link(t,f,-a)
         elif format == 'fee':
             f = row[1]
             t = row[2]
-            v = math.log(float(row[3]))
+            v = math.log(1.0 - float(row[3]))
             add_link(f,t,-v)
             add_link(t,f,-v)
 
 print(graph)
-d, p = bellmanford.bellman_ford(graph, 'a')
-print (d, p)
+for node in origins:
+    d, p, negative_cycles = bellmanford.bellman_ford(graph, node)
+    print (d, p, negative_cycles)
