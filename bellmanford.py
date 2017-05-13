@@ -33,13 +33,24 @@ def bellman_ford(graph, source):
 
     # Step 3: check for negative-weight cycles
     negative_cycles = []
+    print(graph)
     for u in graph:
         for v in graph[u]:
-            if d[v] < d[u] + graph[u][v]:
+            if d[v] > d[u] + graph[u][v]:
                 negative_cycles.append(v)
                 p[v] = u
-
-    return d, p, negative_cycles
+    negative_cycle_lists = []
+    print  (d, p, negative_cycles, negative_cycle_lists)
+    for i in negative_cycles:
+        j = i
+        my_list=[]
+        while True:
+            if j in my_list:
+                break
+            my_list.append(j)
+            j = p[j]
+        negative_cycle_lists.append(my_list)
+    return d, p, negative_cycles, negative_cycle_lists
 
 
 def test():

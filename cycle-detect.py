@@ -36,8 +36,8 @@ with open(sys.argv[1], 'r') as csvfile:
             t = row[2]
             b = math.log(float(row[3]))
             a = math.log(float(row[4]))
-            add_link(f,t,b)
-            add_link(t,f,-a)
+            add_link(f,t,-b)
+            add_link(t,f,a)
         elif format == 'fee':
             f = row[1]
             t = row[2]
@@ -46,5 +46,6 @@ with open(sys.argv[1], 'r') as csvfile:
             add_link(t,f,-v)
 
 for node in origins:
-    d, p, negative_cycles = bellmanford.bellman_ford(graph, node)
-    print (d, p, negative_cycles)
+    d, p, negative_cycles, negative_cycle_lists = \
+       bellmanford.bellman_ford(graph, node)
+    print (d, p, negative_cycles, negative_cycle_lists)
