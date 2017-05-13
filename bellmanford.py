@@ -1,4 +1,6 @@
 import pdb
+from collections import OrderedDict
+
 """
 The Bellman-Ford algorithm
 Graph API:
@@ -9,8 +11,8 @@ Graph API:
 
 # Step 1: For each node prepare the destination and predecessor
 def initialize(graph, source):
-    d = {} # Stands for destination
-    p = {} # Stands for predecessor
+    d = OrderedDict() # Stands for destination
+    p = OrderedDict() # Stands for predecessor
     for node in graph:
         d[node] = float('Inf') # We start admiting that the rest of nodes are very very far
         p[node] = None
@@ -33,14 +35,12 @@ def bellman_ford(graph, source):
 
     # Step 3: check for negative-weight cycles
     negative_cycles = []
-    print(graph)
     for u in graph:
         for v in graph[u]:
             if d[v] > d[u] + graph[u][v]:
                 negative_cycles.append(v)
                 p[v] = u
     negative_cycle_lists = []
-    print  (d, p, negative_cycles, negative_cycle_lists)
     for i in negative_cycles:
         j = i
         my_list=[]

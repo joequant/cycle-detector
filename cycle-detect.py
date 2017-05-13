@@ -3,7 +3,8 @@ import bellmanford
 import csv
 import sys
 import math
-graph = {}
+from collections import OrderedDict
+graph = OrderedDict()
 origins = []
 
 def add_link(f,t,v):
