@@ -32,11 +32,12 @@ def bellman_ford(graph, source):
                 relax(u, v, graph, d, p) #Lets relax it
 
     # Step 3: check for negative-weight cycles
-    negative_cycles = False
+    negative_cycles = []
     for u in graph:
         for v in graph[u]:
             if d[v] < d[u] + graph[u][v]:
-                negative_cycles = True
+                negative_cycles.append(v)
+                p[v] = u
 
     return d, p, negative_cycles
 
