@@ -46,9 +46,9 @@ def bellman_ford(graph, source):
         my_list=[]
         while True:
             if j in my_list:
-                my_list.append(j)
+                my_list.insert(0, j)
                 break
-            my_list.append(j)
+            my_list.insert(0, j)
             j = p[j]
         negative_cycle_lists.append(my_list)
     return d, p, negative_cycles, negative_cycle_lists
