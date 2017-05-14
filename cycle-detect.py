@@ -73,8 +73,8 @@ with open(sys.argv[1], 'r') as csvfile:
             add_link(t,f,-v, d, l)
 
 for node in origins:
-    d, p, negative_cycles, negative_cycle_lists = \
-       bellmanford.bellman_ford(graph, node)
+    bf = bellmanford.BellmanFord(graph, node)
+    d, p, negative_cycle_lists = bf.run()
     for i in negative_cycle_lists:
         print (" -> ".join(i))
         total = 0.0
