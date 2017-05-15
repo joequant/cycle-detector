@@ -86,18 +86,18 @@ class CycleDetect(object):
         for node in self.origins:
             bf = bellmanford.BellmanFord(self.graph, node)
             d, p, negative_cycle_lists = bf.run()
-        for i in negative_cycle_lists:
-            total = 0.0
-            d = 0.0
-            l = None
-            for j in zip(i, i[1::]):
-                total -= self.graph[j[0]][j[1]]
-                d += self.delay[j[0]].get(j[1], 0.0)
-                new_limit = self.limit[j[0]].get(j[1],None)
-                if new_limit is not None:
-                    if l is None or new_limit < l:
-                        l = new_limit
-            retval.append([i, math.exp(total), d, l])
+            for i in negative_cycle_lists:
+                total = 0.0
+                d = 0.0
+                l = None
+                for j in zip(i, i[1::]):
+                    total -= self.graph[j[0]][j[1]]
+                    d += self.delay[j[0]].get(j[1], 0.0)
+                    new_limit = self.limit[j[0]].get(j[1],None)
+                    if new_limit is not None:
+                        if l is None or new_limit < l:
+                            l = new_limit
+                retval.append([i, math.exp(total), d, l])
         return retval
 
     def format(self, cycles):
