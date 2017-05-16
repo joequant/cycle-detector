@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Button} from 'react-bootstrap';
+import {Button,FormControl, FormGroup,
+       ControlLabel} from 'react-bootstrap';
 import logo from './logo.svg';
 import './App.css';
 
@@ -11,7 +12,13 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
             </div>
-	    <Button />
+	    <form>
+	    <FormGroup controlId="formControlsTextarea">
+	    <ControlLabel>Textarea</ControlLabel>
+	    <FormControl componentClass="textarea" placeholder="textarea" />
+	        </FormGroup>
+	    <Button type="submit">Calculate</Button>
+	    </form>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
