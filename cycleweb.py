@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 from cycledetect import CycleDetect
 from flask import Flask, request
+import flask
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='cycleweb-react/build/static',
+            static_url_path='/static')
 
 @app.route("/")
 def root():
-    return app.send_static_file('index.html')
+    return flask.send_from_directory('cycleweb-react/build',
+                                     'index.html')
 
 @app.route("/cycle", methods=['GET', 'POST'])
 def cycle():
