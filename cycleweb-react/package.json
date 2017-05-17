@@ -5,7 +5,9 @@
   "dependencies": {
     "react": "^15.5.4",
       "react-dom": "^15.5.4",
-      "react-bootstrap": "latest"
+      "react-bootstrap": "latest",
+      "request": "latest",
+      "url" : "latest"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"

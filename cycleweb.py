@@ -20,7 +20,8 @@ def root():
 def cycle():
     if request.method == 'POST':
         cd = CycleDetect()
-        f = StringIO(request.form['data'])
+        d = request.get_json()
+        f = StringIO(d['data'])
         cycles = cd.run(f)
         return cd.format(cycles)
 
