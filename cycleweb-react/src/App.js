@@ -25,6 +25,7 @@ class App extends Component {
     constructor(props) {
 	super(props);
 	this.handleFormSubmit = this.handleFormSubmit.bind(this);
+	this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
 	this.state = {
 	    description: '',
 	    result: ''}
@@ -35,16 +36,17 @@ class App extends Component {
 	var me = this;
 	request.post(
 	    requestParser.uriMinusPath + '/cycle',
-	    { json: {data : this.state.description },
+	    { json: {data : this.state.description } },
 	      function (error, response, body) {
+		  console.log('body:', body);
 		  if (!error && response.statusCode == 200) {
 		      me.setState({result: body});
 		  }
 	      }
-	    }
 	);
     }
     handleTextAreaChange(e) {
+	console.log("hello!!!");
 	this.setState({description: e.target.value});
     }
     render() {
@@ -56,7 +58,10 @@ class App extends Component {
 		<form onSubmit={this.handleFormSubmit}>
 		<FormGroup controlId="formControlsTextarea">
 		<ControlLabel>Textarea</ControlLabel>
-		<FormControl componentClass="textarea" placeholder="textarea" />
+		<FormControl componentClass="textarea"
+	    placeholder="textarea"
+	    value={this.state.description}
+	    onChange={this.handleTextAreaChange} />
 	        </FormGroup>
 		<Button type="submit">Calculate</Button>
 		</form>
