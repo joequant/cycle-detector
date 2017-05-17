@@ -40,7 +40,7 @@ class App extends Component {
 	      function (error, response, body) {
 		  console.log('body:', body);
 		  if (!error && response.statusCode == 200) {
-		      me.setState({result: body});
+		      me.setState({result: body.result});
 		  }
 	      }
 	);
@@ -49,6 +49,11 @@ class App extends Component {
 	console.log("hello!!!");
 	this.setState({description: e.target.value});
     }
+
+    formatResults() {
+	return JSON.stringify(this.state.result);
+    }
+
     render() {
 	return (
 		<div className="App">
@@ -66,7 +71,7 @@ class App extends Component {
 		<Button type="submit">Calculate</Button>
 		</form>
 		<p className="App-intro">
-		{this.state.result}
+		{this.formatResults()}
 		</p>
 		</div>
     );

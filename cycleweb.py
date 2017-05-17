@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from cycledetect import CycleDetect
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import flask
 try:
     from StringIO import StringIO
@@ -22,9 +22,7 @@ def cycle():
         cd = CycleDetect()
         d = request.get_json()
         f = StringIO(d['data'])
-        cycles = cd.run(f)
-        return cd.format(cycles)
-
+        return jsonify({'result': cd.run(f)})
 
 if __name__ == '__main__':
     app.debug=True
