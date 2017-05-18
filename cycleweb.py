@@ -6,7 +6,7 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-
+import io
 
 app = Flask(__name__, static_folder='cycleweb-react/build/static',
             static_url_path='/static')
@@ -20,8 +20,11 @@ def root():
 def cycle():
     if request.method == 'POST':
         cd = CycleDetect()
-        d = request.get_json()
-        f = StringIO(d['data'])
+        if 'file' in request.files:
+            f = io.TextIOWrapper(request.files['file'])
+        else:
+            d = request.get_json()
+            f = StringIO(d['data'])
         return jsonify({'result': cd.run(f)})
 
 if __name__ == '__main__':

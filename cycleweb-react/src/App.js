@@ -26,9 +26,12 @@ class App extends Component {
     constructor(props) {
 	super(props);
 	this.handleFormSubmit = this.handleFormSubmit.bind(this);
+	this.handleFileSubmit = this.handleFileSubmit.bind(this);
 	this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
+	this.handleFileChange = this.handleFileChange.bind(this);
 	this.state = {
 	    description: '',
+	    file_upload: '',
 	    result: ''}
     }
     handleFormSubmit(e) {
@@ -53,9 +56,32 @@ class App extends Component {
 	    me.setState({result: "Error"});
 	});
     }
+    handleFileSubmit(e) {
+	console.log("hello!!!");
+	e.preventDefault();
+	var data = new FormData();
+	data.append('file', this.state.file_upload[0]);
+	var me = this;
+	fetch('/cycle', {
+	    method: 'POST',
+	    body: data
+	}).then(function(response) {
+	    return response.json();
+	}).then(function(json) {
+	    console.log("return!!!", json);
+	    me.setState({result: json.result});
+	}).catch(function(ex) {
+	    console.log('parsing failed', ex);
+	    me.setState({result: "Error"});
+	});
+    }
     handleTextAreaChange(e) {
 	console.log("hello!!!");
 	this.setState({description: e.target.value});
+    }
+    handleFileChange(e) {
+	console.log("hello!!!", e.target.files);
+	this.setState({file_upload: e.target.files});
     }
 
     formatResults() {
@@ -68,6 +94,16 @@ class App extends Component {
 		<div className="App-header">
 		<h2>Welcome to the cycle detector</h2>
 		</div>
+		<form onSubmit={this.handleFileSubmit}>
+		<FormGroup controlId="formControlsFile">
+		<ControlLabel>File upload</ControlLabel>
+		<FormControl type="file"
+	    onChange={this.handleFileChange} />
+	        </FormGroup>
+		<Button type="submit">Calculate</Button>
+		</form>
+
+		<hr/>
 		<form onSubmit={this.handleFormSubmit}>
 		<FormGroup controlId="formControlsTextarea">
 		<ControlLabel>Textarea</ControlLabel>
