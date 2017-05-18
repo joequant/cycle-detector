@@ -1,12 +1,13 @@
 #!/usr/bin/python3
-from cycledetect import CycleDetect
-from flask import Flask, request, jsonify
-import flask
+
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 import io
+from flask import Flask, request, jsonify
+import flask
+from cycledetect import CycleDetect
 
 app = Flask(__name__, static_folder='cycleweb-react/build/static',
             static_url_path='/static')
@@ -28,7 +29,7 @@ def cycle():
         return jsonify({'result': cd.run(f)})
 
 if __name__ == '__main__':
-    app.debug=True
+    app.debug = True
     app.run()
 
 

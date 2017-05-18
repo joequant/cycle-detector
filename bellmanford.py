@@ -1,6 +1,3 @@
-import pdb
-from collections import OrderedDict
-
 """
 The Bellman-Ford algorithm
 Graph API:
@@ -8,6 +5,8 @@ Graph API:
     iter(graph[u]) gives neighbours of u
     graph[u][v] gives weight of edge (u, v)
 """
+
+from collections import OrderedDict
 
 # Step 1: For each node prepare the destination and predecessor
 class BellmanFord(object):
@@ -24,7 +23,7 @@ class BellmanFord(object):
         # If the distance between the node and the neighbour is lower than the one I have now
         if self.d[neighbour] > self.d[node] + self.graph[node][neighbour]:
             # Record this lower distance
-            self.d[neighbour]  = self.d[node] + self.graph[node][neighbour]
+            self.d[neighbour] = self.d[node] + self.graph[node][neighbour]
             self.p[neighbour] = node
     def run(self):
         for i in range(len(self.graph)-1): #Run this until is converges
@@ -42,7 +41,7 @@ class BellmanFord(object):
         negative_cycle_lists = []
         for i in negative_cycles:
             j = i
-            my_list=[]
+            my_list = []
             while True:
                 if j in my_list:
                     my_list.insert(0, j)
@@ -81,4 +80,5 @@ def test():
         'e': 'b'
         }
 
-if __name__ == '__main__': test()
+if __name__ == '__main__':
+    test()

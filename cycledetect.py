@@ -1,9 +1,9 @@
 #!/bin/python3
-import bellmanford
 import csv
 import sys
 import math
 from collections import OrderedDict
+import bellmanford
 
 class CycleDetect(object):
     def __init__(self):
@@ -15,7 +15,7 @@ class CycleDetect(object):
         self.delay = OrderedDict()
         self.limit = OrderedDict()
 
-    def add_link(self, f,t,v,d=None,l=None):
+    def add_link(self, f, t, v, d=None, l=None):
         if f not in self.graph:
             self.graph[f] = {}
         if f not in self.delay:
@@ -34,22 +34,22 @@ class CycleDetect(object):
         for row in reader:
             if len(row) == 0:
                 continue
-            format = row[0]
+            lformat = row[0]
             if row[0][0] == '#':
                 continue
-            if format == 'origin':
+            if lformat == 'origin':
                 f = row[1]
                 self.origins.append(f)
-            if format == 'link':
+            if lformat == 'link':
                 f = row[1]
                 t = row[2]
                 v = float(row[3])
-                self.add_link(f,t,v)
-            elif format == 'node':
+                self.add_link(f, t, v)
+            elif lformat == 'node':
                 f = row[1]
                 if f not in self.graph:
                     self.graph[f] = {}
-            elif format == 'bid-ask':
+            elif lformat == 'bid-ask':
                 f = row[1]
                 t = row[2]
                 b = math.log(float(row[3]))
@@ -62,9 +62,9 @@ class CycleDetect(object):
                     l = float(row[6])
                 else:
                     l = None
-                self.add_link(f,t,-b, d, l)
-                self.add_link(t,f,a, d, l)
-            elif format == 'fee':
+                self.add_link(f, t, -b, d, l)
+                self.add_link(t, f, a, d, l)
+            elif lformat == 'fee':
                 f = row[1]
                 t = row[2]
                 v = math.log(1.0 - float(row[3]))
@@ -76,8 +76,8 @@ class CycleDetect(object):
                     l = float(row[5])
                 else:
                     l = None
-                self.add_link(f,t,-v, d, l)
-                self.add_link(t,f,-v, d, l)
+                self.add_link(f, t, -v, d, l)
+                self.add_link(t, f, -v, d, l)
 
     def run(self, fp=None):
         if fp is not None:
@@ -93,16 +93,16 @@ class CycleDetect(object):
                 for j in zip(i, i[1::]):
                     total -= self.graph[j[0]][j[1]]
                     d += self.delay[j[0]].get(j[1], 0.0)
-                    new_limit = self.limit[j[0]].get(j[1],None)
+                    new_limit = self.limit[j[0]].get(j[1], None)
                     if new_limit is not None:
                         if l is None or new_limit < l:
                             l = new_limit
                 retval.append([i, math.exp(total), d, l])
         return retval
 
-    def format(self, cycles):
+    def format(self, cycle_list):
         retval = ''
-        for i in cycles:
+        for i in cycle_list:
             retval += " -> ".join(i[0]) + "\n"
             retval += "Expected return: " + str(i[1]) + "\n"
             retval += "Delay: " + str(i[2]) + "\n"
