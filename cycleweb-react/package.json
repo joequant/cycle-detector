@@ -6,7 +6,7 @@
     "react": "^15.5.4",
       "react-dom": "^15.5.4",
       "react-bootstrap": "latest",
-      "request": "latest",
+      "whatwg-fetch-importable": "latest",
       "url" : "latest"
   },
   "devDependencies": {

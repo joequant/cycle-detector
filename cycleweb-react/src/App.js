@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import './App.css';
 import request from 'request';
 import url from  'url';
+import 'whatwg-fetch';
 
 var requestParser = (function() {
     var href = document.location.href;
@@ -34,16 +35,23 @@ class App extends Component {
 	console.log("hello!!!");
 	e.preventDefault();
 	var me = this;
-	request.post(
-	    requestParser.uriMinusPath + '/cycle',
-	    { json: {data : this.state.description } },
-	      function (error, response, body) {
-		  console.log('body:', body);
-		  if (!error && response.statusCode == 200) {
-		      me.setState({result: body.result});
-		  }
-	      }
-	);
+	fetch('/cycle', {
+	    method: 'POST',
+	    headers: {
+		'Content-Type': 'application/json'
+	    },
+	    body: JSON.stringify({
+		data : this.state.description
+	    })
+	}).then(function(response) {
+	    return response.json();
+	}).then(function(json) {
+	    console.log("return!!!", json);
+	    me.setState({result: json.result});
+	}).catch(function(ex) {
+	    console.log('parsing failed', ex);
+	    me.setState({result: "Error"});
+	});
     }
     handleTextAreaChange(e) {
 	console.log("hello!!!");
