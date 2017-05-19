@@ -35,7 +35,7 @@ class CycleDetect(object):
             if len(row) == 0:
                 continue
             lformat = row[0]
-            if row[0][0] == '#':
+            if len(row[0]) == 0 or row[0][0] == '#':
                 continue
             if lformat == 'origin':
                 f = row[1]
