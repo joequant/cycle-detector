@@ -3,6 +3,7 @@ import csv
 import sys
 import math
 from collections import OrderedDict
+from graphviz import Digraph
 import bellmanford
 
 class CycleDetect(object):
@@ -78,6 +79,20 @@ class CycleDetect(object):
                     l = None
                 self.add_link(f, t, -v, d, l)
                 self.add_link(t, f, -v, d, l)
+
+    def graphviz(self, fp=None):
+        if fp is not None:
+            self.load(fp);
+        dot = Digraph(format='png')
+        for ik, iv in self.graph.items():
+            ikid = ik.replace(":", "__")
+            dot.node(ikid, ik)
+        for ik, iv in self.graph.items():
+            for jk, jv in iv.items():
+                ikid = ik.replace(":", "__")
+                jkid = jk.replace(":", "__")
+                dot.edge(ikid, jkid)
+        return dot.pipe()
 
     def run(self, fp=None):
         if fp is not None:

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Button,FormControl, FormGroup,
        ControlLabel} from 'react-bootstrap';
 import logo from './logo.svg';
+import blank from './blank.png';
 import './App.css';
 import request from 'request';
 import url from  'url';
@@ -32,13 +33,11 @@ class App extends Component {
 	this.state = {
 	    description: '',
 	    file_upload: '',
-	    result: ''}
+	    result: '',
+	    image_src: blank }
     }
     handleFormSubmit(e) {
-	console.log("hello!!!");
-	e.preventDefault();
-	var me = this;
-	fetch('/cycle', {
+	this.handleSubmit(e, {
 	    method: 'POST',
 	    headers: {
 		'Content-Type': 'application/json'
@@ -46,26 +45,21 @@ class App extends Component {
 	    body: JSON.stringify({
 		data : this.state.description
 	    })
-	}).then(function(response) {
-	    return response.json();
-	}).then(function(json) {
-	    console.log("return!!!", json);
-	    me.setState({result: json.result});
-	}).catch(function(ex) {
-	    console.log('parsing failed', ex);
-	    me.setState({result: "Error"});
 	});
     }
     handleFileSubmit(e) {
-	console.log("hello!!!");
-	e.preventDefault();
 	var data = new FormData();
 	data.append('file', this.state.file_upload[0]);
-	var me = this;
-	fetch('/cycle', {
+	this.handleSubmit(e, {
 	    method: 'POST',
 	    body: data
-	}).then(function(response) {
+	});
+    }
+    handleSubmit(e, data) {
+	console.log("hello!!!");
+	e.preventDefault();
+	var me = this;
+	fetch('/cycle', data).then(function(response) {
 	    return response.json();
 	}).then(function(json) {
 	    console.log("return!!!", json);
@@ -74,7 +68,17 @@ class App extends Component {
 	    console.log('parsing failed', ex);
 	    me.setState({result: "Error"});
 	});
+	fetch('/cycle-viz', data).then(function(response) {
+	    return response.blob();
+	}).then(function(blob) {
+	    var objectURL = URL.createObjectURL(blob);
+	    me.setState({image_src: objectURL});
+	}).catch(function(ex) {
+	    console.log('parsing failed', ex);
+	    me.setState({result: "Error"});
+	});
     }
+
     handleTextAreaChange(e) {
 	console.log("hello!!!");
 	this.setState({description: e.target.value});
@@ -116,7 +120,8 @@ class App extends Component {
 		</form>
 		<p className="App-intro">
 		{this.formatResults()}
-		</p>
+	    </p>
+		<img src={this.state.image_src}/>
 		</div>
     );
   }

@@ -5,7 +5,7 @@ try:
 except ImportError:
     from io import StringIO
 import io
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import flask
 from cycledetect import CycleDetect
 
@@ -27,6 +27,19 @@ def cycle():
             d = request.get_json()
             f = StringIO(d['data'])
         return jsonify({'result': cd.run(f)})
+
+@app.route("/cycle-viz", methods=['GET', 'POST'])
+def cycle_viz():
+    if request.method == 'POST':
+        cd = CycleDetect()
+        if 'file' in request.files:
+            f = io.TextIOWrapper(request.files['file'])
+        else:
+            d = request.get_json()
+            f = StringIO(d['data'])
+        d = cd.graphviz(f)
+        return send_file(io.BytesIO(d),
+                         mimetype='image/png')
 
 if __name__ == '__main__':
     app.debug = True
