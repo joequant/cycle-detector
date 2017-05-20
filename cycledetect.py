@@ -78,7 +78,6 @@ class CycleDetect(object):
                 else:
                     l = None
                 self.add_link(f, t, -v, d, l)
-                self.add_link(t, f, -v, d, l)
 
     def graphviz(self, fp=None):
         if fp is not None:
