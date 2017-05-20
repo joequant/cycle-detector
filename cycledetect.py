@@ -82,15 +82,26 @@ class CycleDetect(object):
     def graphviz(self, fp=None):
         if fp is not None:
             self.load(fp);
+        nl = self.run()
+        show = {}
         dot = Digraph(format='png')
         for ik, iv in self.graph.items():
             ikid = ik.replace(":", "__")
             dot.node(ikid, ik)
+        for i in nl:
+            i1 = i[0]
+            for j in zip(i1, i1[1::]):
+                ikid = j[0].replace(":", "__")
+                jkid = j[1].replace(":", "__")
+                if (ikid, jkid) not in show:
+                    show[(ikid, jkid)] = True
+                    dot.edge(ikid, jkid, color='red')
         for ik, iv in self.graph.items():
             for jk, jv in iv.items():
                 ikid = ik.replace(":", "__")
                 jkid = jk.replace(":", "__")
-                dot.edge(ikid, jkid)
+                if (ikid, jkid) not in show:
+                    dot.edge(ikid, jkid)
         return dot.pipe()
 
     def run(self, fp=None):
