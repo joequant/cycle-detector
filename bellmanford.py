@@ -48,7 +48,12 @@ class BellmanFord(object):
                     break
                 my_list.insert(0, j)
                 j = self.p[j]
-            negative_cycle_lists.append(my_list)
+            cut_list = my_list[:1]
+            for i in my_list[1:]:
+                cut_list.append(i)
+                if my_list[0] == i:
+                    break
+            negative_cycle_lists.append(cut_list)
         return self.d, self.p, negative_cycle_lists
 
 
