@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Button,FormControl, FormGroup,
-       ControlLabel} from 'react-bootstrap';
+import {Button, FormControl, FormGroup,
+	ControlLabel, Form} from 'react-bootstrap';
 import logo from './logo.svg';
 import blank from './blank.png';
 import './App.css';
@@ -89,7 +89,24 @@ class App extends Component {
     }
 
     formatResults() {
-	return JSON.stringify(this.state.result);
+	var result = this.state.result;
+	if( Object.prototype.toString.call( result ) === '[object Array]' ) {
+	    var description = "";
+	    result.forEach((i) => {
+		description +=  i[0].join(" -> ");
+		if (i[1] !== null) {
+		    description += "Arb: " + i[1] + "\n";
+		}
+		if (i[2] !== null) {
+		    description += "Delay: " + i[2] + "\n";
+		}
+		if (i[3] !== null) {
+		    description += "Limit: " + i[3] + "\n";
+		}
+	    });
+	    return (<pre>{description}</pre>);
+	}
+	return "";
     }
 
     render() {
@@ -98,15 +115,14 @@ class App extends Component {
 		<div className="App-header">
 		<h2>Welcome to the cycle detector</h2>
 		</div>
-		<form onSubmit={this.handleFileSubmit}>
+		<Form inline onSubmit={this.handleFileSubmit}>
 		<FormGroup controlId="formControlsFile">
 		<ControlLabel>File upload</ControlLabel>
 		<FormControl type="file"
 	    onChange={this.handleFileChange} />
 	        </FormGroup>
 		<Button type="submit">Calculate</Button>
-		</form>
-
+		</Form>
 		<hr/>
 		<form onSubmit={this.handleFormSubmit}>
 		<FormGroup controlId="formControlsTextarea">
