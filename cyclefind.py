@@ -2,11 +2,8 @@
 
 cycles = []
 
-from cycledetect import CycleDetect
+
 import sys
-
-
-
 
 def visited(node, path):
     return node in path
@@ -75,6 +72,7 @@ class CycleFind(object):
         return not path in self.cycles
 
 if __name__ == '__main__':
+    from cycledetect import CycleDetect
     cd = CycleDetect()
     with open(sys.argv[1], 'r') as csvfile:
         cd.load(csvfile)

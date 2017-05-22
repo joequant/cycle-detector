@@ -4,7 +4,7 @@ import sys
 import math
 from collections import OrderedDict
 from graphviz import Digraph
-import bellmanford
+from cyclefind import CycleFind
 
 class CycleDetect(object):
     def __init__(self):
@@ -108,21 +108,23 @@ class CycleDetect(object):
         if fp is not None:
             self.load(fp)
         retval = []
-        for node in self.origins:
-            bf = bellmanford.BellmanFord(self.graph, node)
-            d, p, negative_cycle_lists = bf.run()
-            for i in negative_cycle_lists:
-                total = 0.0
-                d = 0.0
-                l = None
-                for j in zip(i, i[1::]):
-                    total -= self.graph[j[0]][j[1]]
-                    d += self.delay[j[0]].get(j[1], 0.0)
-                    new_limit = self.limit[j[0]].get(j[1], None)
-                    if new_limit is not None:
-                        if l is None or new_limit < l:
-                            l = new_limit
-                retval.append([i, math.exp(total), d, l])
+        cf = CycleFind(self.graph, self.origins)
+        cycles = cf.run()
+        negative_cycle_lists = cf.filter_negative(cycles)
+        for i in negative_cycle_lists:
+            total = 0.0
+            d = 0.0
+            l = None
+            i1 = list(i)
+            i1.append(i[0])
+            for j in zip(i1, i1[1::]):
+                total -= self.graph[j[0]][j[1]]
+                d += self.delay[j[0]].get(j[1], 0.0)
+                new_limit = self.limit[j[0]].get(j[1], None)
+                if new_limit is not None:
+                    if l is None or new_limit < l:
+                        l = new_limit
+            retval.append([i1, math.exp(total), d, l])
         return retval
 
     def format(self, cycle_list):
