@@ -1,39 +1,48 @@
 #!/usr/bin/python3
 
-graph = [[1, 2], [1, 3], [1, 4], [2, 3], [3, 4], [2, 6], [4, 6], [8, 7], [8, 9], [9, 7]]
 cycles = []
 
+from cycledetect import CycleDetect
+import sys
+
 def main():
-    global graph
     global cycles
-    for edge in graph:
-        for node in edge:
-            findNewCycles([node])
+    cd = CycleDetect()
+    with open(sys.argv[1], 'r') as csvfile:
+        cd.load(csvfile)
+    edges = getEdges(cd.graph)
+    print(edges)
+    for node in cd.origins:
+        print("node: ", node)
+        findNewCycles(edges, [node])
     for cy in cycles:
         path = [str(node) for node in cy]
         s = ",".join(path)
         print(s)
 
-def findNewCycles(path):
+def getEdges(graph):
+    retval = []
+    for ik, iv in graph.items():
+        for jk, jv in iv.items():
+            retval.append([ik, jk])
+    return retval
+
+def findNewCycles(edges, path):
     start_node = path[0]
     next_node= None
     sub = []
-
     #visit each edge and each node of each edge
-    for edge in graph:
+    for edge in edges:
         node1, node2 = edge
-        if start_node in edge:
-                if node1 == start_node:
-                    next_node = node2
-                else:
-                    next_node = node1
-        if not visited(next_node, path):
+        if node1 == start_node:
+            next_node = node2
+            if not visited(next_node, path):
                 # neighbor node not on path yet
                 sub = [next_node]
                 sub.extend(path)
                 # explore extended path
-                findNewCycles(sub);
-        elif len(path) > 2  and next_node == path[-1]:
+                findNewCycles(edges, sub);
+            elif len(path) > 2  and next_node == path[-1]:
                 # cycle found
                 p = rotate_to_smallest(path);
                 inv = invert(p)
