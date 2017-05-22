@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-cycles = []
-
-
 import sys
 
 def visited(node, path):
@@ -18,7 +15,7 @@ class CycleFind(object):
         paths = []
         for node in self.source:
             self.findNewCycles([node])
-            for cy in cycles:
+            for cy in self.cycles:
                 paths.append([str(node) for node in cy])
         return paths
     def getEdges(self, graph):
@@ -46,7 +43,7 @@ class CycleFind(object):
                     # cycle found
                     p = self.rotate_to_smallest(path);
                     if self.isNew(p):
-                        cycles.append(p)
+                        self.cycles.append(p)
     def filter_negative(self, cycles):
         negative_cycles = []
         for i in cycles:
