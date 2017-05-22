@@ -8,6 +8,24 @@ import request from 'request';
 import url from  'url';
 import 'whatwg-fetch';
 
+function CycleLine(props) {
+    var data = props.data;
+    var header = props.header;
+    if (data != null) {
+	return <li>{header}{data}</li>;
+    } else {
+	return "";
+    }
+}
+
+function CycleDisplay(props) {
+    var i = props.element;
+    return (<ul><li>(i[0].join("->")}</li>
+	    <CycleLine header='Arb: ' data={i[1]}/>
+	    <CycleLine header='Delay: ' data={i[2]}/>
+	    <CycleLine header='Limit: ' data={i[3]}/></ul>);
+}
+
 var requestParser = (function() {
     var href = document.location.href;
     var urlObj = url.parse(href, true);
@@ -91,20 +109,9 @@ class App extends Component {
     formatResults() {
 	var result = this.state.result;
 	if( Object.prototype.toString.call( result ) === '[object Array]' ) {
-	    var description = "";
-	    result.forEach((i) => {
-		description +=  i[0].join(" -> ");
-		if (i[1] !== null) {
-		    description += "Arb: " + i[1] + "\n";
-		}
-		if (i[2] !== null) {
-		    description += "Delay: " + i[2] + "\n";
-		}
-		if (i[3] !== null) {
-		    description += "Limit: " + i[3] + "\n";
-		}
-	    });
-	    return (<pre>{description}</pre>);
+	    return (<div>{result.forEach((i) => {
+		return <CycleDisplay element={i} />
+	    })}</div>);
 	}
 	return "";
     }
@@ -134,7 +141,7 @@ class App extends Component {
 	        </FormGroup>
 		<Button type="submit">Calculate</Button>
 		</form>
-		<p className="App-intro">
+		<p>
 		{this.formatResults()}
 	    </p>
 		<img src={this.state.image_src}/>
