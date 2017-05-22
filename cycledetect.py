@@ -23,11 +23,18 @@ class CycleDetect(object):
             self.delay[f] = {}
         if f not in self.limit:
             self.limit[f] = {}
-        self.graph[f][t] = v
+        if t not in self.graph[f]:
+            self.graph[f][t] = 0.0
+        self.graph[f][t] += v
         if d is not None:
-            self.delay[f][t] = d
+            if t not in self.delay[f]:
+                self.delay[f][t] = 0.0
+            self.delay[f][t] += d
         if l is not None:
-            self.limit[f][t] = l
+            if t not in self.limit[f]:
+                self.limit[f][t] = l
+            else:
+                self.limit[f][t] = min(self.limit[f][t], l)
 
     def load(self, fp):
         self.reset()
@@ -68,7 +75,7 @@ class CycleDetect(object):
             elif lformat == 'fee':
                 f = row[1]
                 t = row[2]
-                v = math.log(1.0 - float(row[3]))
+                v = math.log(1.0 - float(row[3])/100.0)
                 if len(row) > 4 and row[4] != "":
                     d = float(row[4])
                 else:
