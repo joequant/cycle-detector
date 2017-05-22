@@ -12,15 +12,17 @@ function CycleLine(props) {
     var data = props.data;
     var header = props.header;
     if (data != null) {
-	return <li>{header}{data}</li>;
+	console.log('cycle-line', data);
+	return (<li>{header}{data}</li>);
     } else {
-	return "";
+	return null;
     }
 }
 
 function CycleDisplay(props) {
     var i = props.element;
-    return (<ul><li>(i[0].join("->")}</li>
+    console.log('cycle-display', i);
+    return (<ul><li>{i[0].join("->")}</li>
 	    <CycleLine header='Arb: ' data={i[1]}/>
 	    <CycleLine header='Delay: ' data={i[2]}/>
 	    <CycleLine header='Limit: ' data={i[3]}/></ul>);
@@ -108,10 +110,15 @@ class App extends Component {
 
     formatResults() {
 	var result = this.state.result;
+
 	if( Object.prototype.toString.call( result ) === '[object Array]' ) {
-	    return (<div>{result.forEach((i) => {
-		return <CycleDisplay element={i} />
-	    })}</div>);
+	    result.sort((a,b) => {return b[1] - a[1]});
+	    var elems = result.map((i) => {
+		console.log('proto', i);
+		return (<CycleDisplay element={i} />);
+	    });
+	    console.log(elems);
+	    return (<div>{elems}</div>);
 	}
 	return "";
     }
