@@ -36,55 +36,56 @@ class CycleDetect(object):
             else:
                 self.limit[f][t] = min(self.limit[f][t], l)
 
-    def load(self, fp):
-        self.reset()
-        reader = csv.reader(fp, delimiter=',', quotechar='"')
-        for row in reader:
-            if len(row) == 0:
-                continue
-            lformat = row[0]
-            if len(row[0]) == 0 or row[0][0] == '#':
-                continue
-            if lformat == 'origin':
-                f = row[1]
-                self.origins.append(f)
-            if lformat == 'link':
-                f = row[1]
-                t = row[2]
-                v = float(row[3])
-                self.add_link(f, t, v)
-            elif lformat == 'node':
-                f = row[1]
-                if f not in self.graph:
-                    self.graph[f] = {}
-            elif lformat == 'bid-ask':
-                f = row[1]
-                t = row[2]
-                b = math.log(float(row[3]))
-                a = math.log(float(row[4]))
-                if len(row) > 5 and row[5] != "":
-                    d = float(row[5])
-                else:
-                    d = None
-                if len(row) > 6 and row[6] != "":
-                    l = float(row[6])
-                else:
-                    l = None
-                self.add_link(f, t, -b, d, l)
-                self.add_link(t, f, a, d, l)
-            elif lformat == 'fee':
-                f = row[1]
-                t = row[2]
-                v = math.log(1.0 - float(row[3])/100.0)
-                if len(row) > 4 and row[4] != "":
-                    d = float(row[4])
-                else:
-                    d = None
-                if len(row) > 5 and row[5] != "":
-                    l = float(row[5])
-                else:
-                    l = None
-                self.add_link(f, t, -v, d, l)
+    def load(self, fplist):
+        for fp in fplist:
+            reader = csv.reader(fp, delimiter=',', quotechar='"')
+            for row in reader:
+                if len(row) == 0:
+                    continue
+                lformat = row[0]
+                if len(row[0]) == 0 or row[0][0] == '#':
+                    continue
+                if lformat == 'origin':
+                    f = row[1]
+                    if f not in self.origins:
+                        self.origins.append(f)
+                if lformat == 'link':
+                    f = row[1]
+                    t = row[2]
+                    v = float(row[3])
+                    self.add_link(f, t, v)
+                elif lformat == 'node':
+                    f = row[1]
+                    if f not in self.graph:
+                        self.graph[f] = {}
+                elif lformat == 'bid-ask':
+                    f = row[1]
+                    t = row[2]
+                    b = math.log(float(row[3]))
+                    a = math.log(float(row[4]))
+                    if len(row) > 5 and row[5] != "":
+                        d = float(row[5])
+                    else:
+                        d = None
+                    if len(row) > 6 and row[6] != "":
+                        l = float(row[6])
+                    else:
+                        l = None
+                    self.add_link(f, t, -b, d, l)
+                    self.add_link(t, f, a, d, l)
+                elif lformat == 'fee':
+                    f = row[1]
+                    t = row[2]
+                    v = math.log(1.0 - float(row[3])/100.0)
+                    if len(row) > 4 and row[4] != "":
+                        d = float(row[4])
+                    else:
+                        d = None
+                    if len(row) > 5 and row[5] != "":
+                        l = float(row[5])
+                    else:
+                        l = None
+                    self.add_link(f, t, -v, d, l)
 
     def graphviz(self, fp=None):
         if fp is not None:
@@ -117,7 +118,9 @@ class CycleDetect(object):
         retval = []
         cf = CycleFind(self.graph, self.origins)
         cycles = cf.run()
+        print("cycles", len(cycles))
         negative_cycle_lists = cf.filter_negative(cycles)
+        print("neg-cycle", negative_cycle_lists)
         for i in negative_cycle_lists:
             total = 0.0
             d = 0.0
@@ -147,6 +150,10 @@ class CycleDetect(object):
 
 if __name__ == '__main__':
     cd = CycleDetect()
-    with open(sys.argv[1], 'r') as csvfile:
-        cycles = cd.run(csvfile)
-        print(cd.format(cycles))
+    for i in sys.argv[1:]:
+        with open(i, 'r') as csvfile:
+            print("Loading: ", i)
+            cd.load([csvfile])
+    cycles = cd.run()
+    print(cycles)
+    print(cd.format(cycles))

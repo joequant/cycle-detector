@@ -52,7 +52,7 @@ class App extends Component {
 	this.handleFileChange = this.handleFileChange.bind(this);
 	this.state = {
 	    description: '',
-	    file_upload: '',
+	    file_upload: [],
 	    result: '',
 	    image_src: blank }
     }
@@ -69,7 +69,9 @@ class App extends Component {
     }
     handleFileSubmit(e) {
 	var data = new FormData();
-	data.append('file', this.state.file_upload[0]);
+	for(var file of this.state.file_upload) {
+	    data.append('file[]', file);
+	};
 	this.handleSubmit(e, {
 	    method: 'POST',
 	    body: data
@@ -131,8 +133,8 @@ class App extends Component {
 		</div>
 		<Form inline onSubmit={this.handleFileSubmit}>
 		<FormGroup controlId="formControlsFile">
-		<ControlLabel>File upload</ControlLabel>
-		<FormControl type="file"
+		<ControlLabel>File upload (multiple files allowed)</ControlLabel>
+		<FormControl type="file" multiple
 	    onChange={this.handleFileChange} />
 	        </FormGroup>
 		<Button type="submit">Calculate</Button>

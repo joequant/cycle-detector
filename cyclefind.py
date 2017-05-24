@@ -71,10 +71,12 @@ class CycleFind(object):
 if __name__ == '__main__':
     from cycledetect import CycleDetect
     cd = CycleDetect()
-    with open(sys.argv[1], 'r') as csvfile:
-        cd.load(csvfile)
-        cf = CycleFind(cd.graph, cd.origins)
-        cycles = cf.run()
-        negative_cycles = cf.filter_negative(cycles)
-        for i in negative_cycles:
-            print (" -> " .join(i))
+    for i in sys.argv[1:]:
+        with open(i, 'r') as csvfile:
+            print("Loading: ", i)
+            cd.load([csvfile])
+    cf = CycleFind(cd.graph, cd.origins)
+    cycles = cf.run()
+    negative_cycles = cf.filter_negative(cycles)
+    for i in negative_cycles:
+        print (" -> " .join(i))

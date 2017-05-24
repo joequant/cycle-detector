@@ -21,22 +21,26 @@ def root():
 def cycle():
     if request.method == 'POST':
         cd = CycleDetect()
-        if 'file' in request.files:
-            f = io.TextIOWrapper(request.files['file'])
+        if 'file[]' in request.files:
+            f = [ io.TextIOWrapper(x) \
+                  for x in request.files.getlist('file[]') ]
         else:
             d = request.get_json()
-            f = StringIO(d['data'])
-        return jsonify({'result': cd.run(f)})
+            f = [StringIO(d['data'])]
+        result = cd.run(f)
+        print(len(result))
+        return jsonify({'result': result})
 
 @app.route("/cycle-viz", methods=['GET', 'POST'])
 def cycle_viz():
     if request.method == 'POST':
         cd = CycleDetect()
-        if 'file' in request.files:
-            f = io.TextIOWrapper(request.files['file'])
+        if 'file[]' in request.files:
+            f = [ io.TextIOWrapper(x) \
+                  for x in request.files.getlist('file[]') ]
         else:
             d = request.get_json()
-            f = StringIO(d['data'])
+            f = [StringIO(d['data'])]
         d = cd.graphviz(f)
         return send_file(io.BytesIO(d),
                          mimetype='image/png')
