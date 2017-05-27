@@ -38,6 +38,7 @@ class CycleDetect(object):
                 self.limit[f][t] = min(self.limit[f][t], l)
 
     def load(self, fplist):
+        tfee = []
         for fp in fplist:
             reader = csv.reader(fp, delimiter=',', quotechar='"')
             for row in reader:
@@ -121,9 +122,7 @@ class CycleDetect(object):
         retval = []
         cf = CycleFind(self.graph, self.origins, cyclelimit=self.cyclelimit)
         cycles = cf.run()
-        print("cycles", len(cycles))
         negative_cycle_lists = cf.filter_negative(cycles)
-        print("neg-cycle", negative_cycle_lists)
         for i in negative_cycle_lists:
             total = 0.0
             d = 0.0
