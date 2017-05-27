@@ -15,6 +15,7 @@ class CycleDetect(object):
         self.origins = []
         self.delay = OrderedDict()
         self.limit = OrderedDict()
+        self.cyclelimit = None
 
     def add_link(self, f, t, v, d=None, l=None):
         if f not in self.graph:
@@ -54,6 +55,8 @@ class CycleDetect(object):
                     t = row[2]
                     v = float(row[3])
                     self.add_link(f, t, v)
+                elif lformat == 'cycle-limit':
+                    self.cyclelimit = int(row[1])
                 elif lformat == 'node':
                     f = row[1]
                     if f not in self.graph:
@@ -116,7 +119,7 @@ class CycleDetect(object):
         if fp is not None:
             self.load(fp)
         retval = []
-        cf = CycleFind(self.graph, self.origins)
+        cf = CycleFind(self.graph, self.origins, cyclelimit=self.cyclelimit)
         cycles = cf.run()
         print("cycles", len(cycles))
         negative_cycle_lists = cf.filter_negative(cycles)

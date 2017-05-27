@@ -6,11 +6,14 @@ def visited(node, path):
     return node in path
 
 class CycleFind(object):
-    def __init__(self, graph, source):
+    def __init__(self, graph, source, **kwargs):
         self.graph = graph
         self.source = source
         self.cycles = []
         self.edges = self.getEdges(graph)
+        self.cyclelimit = kwargs.get('cyclelimit', None)
+        if self.cyclelimit is not None:
+            self.cyclelimit = int(self.cyclelimit)
     def run(self):
         paths = []
         for node in self.source:
@@ -28,6 +31,9 @@ class CycleFind(object):
         start_node = path[-1]
         next_node= None
         sub = []
+        if self.cyclelimit is not None and \
+               len(path) > self.cyclelimit:
+            return
         #visit each edge and each node of each edge
         for edge in self.edges:
             node1, node2 = edge
@@ -75,7 +81,7 @@ if __name__ == '__main__':
         with open(i, 'r') as csvfile:
             print("Loading: ", i)
             cd.load([csvfile])
-    cf = CycleFind(cd.graph, cd.origins)
+    cf = CycleFind(cd.graph, cd.origins, cyclelimit=cd.cyclelimit)
     cycles = cf.run()
     negative_cycles = cf.filter_negative(cycles)
     for i in negative_cycles:
