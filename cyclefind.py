@@ -10,7 +10,7 @@ class CycleFind(object):
         self.graph = graph
         self.source = source
         self.cycles = []
-        self.edges = self.getEdges(graph)
+        self.edges, self.weights = self.getEdges(graph)
         self.cyclelimit = kwargs.get('cyclelimit', None)
         if self.cyclelimit is not None:
             self.cyclelimit = int(self.cyclelimit)
@@ -22,10 +22,11 @@ class CycleFind(object):
                 paths.append([str(node) for node in cy])
         return paths
     def getEdges(self, graph):
-        retval = []
+        retval = ([], {})
         for ik, iv in graph.items():
             for jk, jv in iv.items():
-                retval.append([ik, jk])
+                retval[0].append((ik, jk))
+                retval[1][(ik, jk)] = jv
         return retval
     def findNewCycles(self, path):
         start_node = path[-1]
@@ -39,6 +40,17 @@ class CycleFind(object):
             node1, node2 = edge
             if node1 == start_node:
                 next_node = node2
+                # check if there is a chord with a shorter path
+                weight = self.weights[edge]
+                shorter_path = False
+                for i1, i2 in zip(path[-2::-1], path[::-1]):
+                    weight += self.weights[(i1, i2)]
+                    if (i1, next_node) in self.edges and \
+                           self.weights[(i1, next_node)] < weight:
+                        shorter_path = True
+                        break
+                if shorter_path:
+                    continue
                 if not visited(next_node, path):
                     # neighbor node not on path yet
                     sub = list(path)
