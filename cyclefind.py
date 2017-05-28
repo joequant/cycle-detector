@@ -57,9 +57,9 @@ class CycleFind(object):
                     sub.append(next_node)
                     # explore extended path
                     self.findNewCycles(sub);
-                elif len(path) > 2  and next_node == path[0]:
+                elif len(path) > 2  and next_node in path:
                     # cycle found
-                    p = self.rotate_to_smallest(path);
+                    p = self.rotate_to_smallest(path, next_node);
                     if self.isNew(p):
                         self.cycles.append(p)
     def filter_negative(self, cycles):
@@ -74,7 +74,9 @@ class CycleFind(object):
                 negative_cycles.append(i)
         return negative_cycles
 #  rotate cycle path such that it begins with the smallest node
-    def rotate_to_smallest(self, path):
+    def rotate_to_smallest(self, path, next_node):
+        i = path.index(next_node)
+        path = path[i::]
         for i in self.source:
             if i in path:
                 n = path.index(i)

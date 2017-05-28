@@ -139,15 +139,17 @@ class CycleDetect(object):
             retval.append([i1, math.exp(total), d, l])
         return retval
 
-    def format(self, cycle_list):
+    def format(self, cycle_list, threshold = 0.0):
         retval = ''
         for i in cycle_list:
-            retval += " -> ".join(i[0]) + "\n"
-            retval += "Expected return: " + str(i[1]) + "\n"
-            retval += "Delay: " + str(i[2]) + "\n"
-            if i[3] is not None:
-                retval += "Limit: " + str(i[3]) + "\n"
-            retval += "\n"
+            percent = (i[1] - 1.0) * 100
+            if percent > threshold:
+                retval += " -> ".join(i[0]) + "\n"
+                retval += "Expected return: " + str(percent) + "\n"
+                retval += "Delay: " + str(i[2]) + "\n"
+                if i[3] is not None:
+                    retval += "Limit: " + str(i[3]) + "\n"
+                retval += "\n"
         return retval
 
 if __name__ == '__main__':
@@ -157,5 +159,4 @@ if __name__ == '__main__':
             print("Loading: ", i)
             cd.load([csvfile])
     cycles = cd.run()
-    print(cycles)
-    print(cd.format(cycles))
+    print(cd.format(cycles, 2))
