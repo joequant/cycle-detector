@@ -18,9 +18,7 @@ class CycleFind(object):
         paths = []
         for node in self.source:
             self.findNewCycles([node])
-            for cy in self.cycles:
-                paths.append([str(node) for node in cy])
-        return paths
+        return self.cycles
     def getEdges(self, graph):
         retval = ([], {})
         for ik, iv in graph.items():
@@ -83,8 +81,6 @@ class CycleFind(object):
                 return path[n:]+path[:n]
         n = path.index(min(path))
         return path[n:]+path[:n]
-    def invert(self, path):
-        return self.rotate_to_smallest(path[::-1])
     def isNew(self, path):
         return not path in self.cycles
 
@@ -98,5 +94,5 @@ if __name__ == '__main__':
     cf = CycleFind(cd.graph, cd.origins, cyclelimit=cd.cyclelimit)
     cycles = cf.run()
     negative_cycles = cf.filter_negative(cycles)
-    for i in negative_cycles:
+    for i in cycles:
         print (" -> " .join(i))
