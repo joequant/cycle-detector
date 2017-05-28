@@ -159,4 +159,5 @@ if __name__ == '__main__':
             print("Loading: ", i)
             cd.load([csvfile])
     cycles = cd.run()
+    cycles.sort(key=lambda a: -a[1]) 
     print(cd.format(cycles, 2))
