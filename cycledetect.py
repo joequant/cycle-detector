@@ -15,6 +15,7 @@ class CycleDetect(object):
         self.origins = []
         self.delay = OrderedDict()
         self.limit = OrderedDict()
+        self.trade = OrderedDict()
         self.cyclelimit = None
 
     def add_link(self, f, t, v, d=None, l=None):
@@ -77,7 +78,30 @@ class CycleDetect(object):
                         l = None
                     self.add_link(f, t, -b, d, l)
                     self.add_link(t, f, a, d, l)
-                elif lformat == 'fee':
+                    if (f, t) in self.trade:
+                        trade = self.trade[(f, t)]
+                        self.add_link(f, t, -v, d, l)
+                    elif (t, f) in self.trade:
+                        trade = self.trade[(t, f)]
+                        self.add_link(t, f, -v, d, l)
+                elif lformat == 'trade':
+                    f = row[1]
+                    t = row[2]
+                    v = math.log(1.0 - float(row[3])/100.0)
+                    if len(row) > 4 and row[4] != "":
+                        d = float(row[4])
+                    else:
+                        d = None
+                    if len(row) > 5 and row[5] != "":
+                        l = float(row[5])
+                    else:
+                        l = None
+                    self.trade[(f,t)] = [v, d, l]
+                    if f in self.graph and t in self.graph[f]:
+                        self.add_link(f, t, -v, d, l)
+                    elif t in self.graph and f in self.graph[t]:
+                        self.add_link(t, f, -v, d, l)
+                elif lformat == 'transfer':
                     f = row[1]
                     t = row[2]
                     v = math.log(1.0 - float(row[3])/100.0)
