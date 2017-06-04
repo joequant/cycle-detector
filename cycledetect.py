@@ -7,8 +7,9 @@ from graphviz import Digraph
 from cyclefind import CycleFind
 
 class CycleDetect(object):
-    def __init__(self):
+    def __init__(self, use_last=True):
         self.reset()
+        self.use_last = use_last
 
     def reset(self):
         self.graph = OrderedDict()
@@ -69,15 +70,15 @@ class CycleDetect(object):
                     b = math.log(float(row[3]))
                     a = math.log(float(row[4]))
                     if len(row) > 5 and row[5] != "":
-                        d = float(row[5])
-                    else:
-                        d = None
-                    if len(row) > 6 and row[6] != "":
-                        l = float(row[6])
+                        l = math.log(float(row[5]))
                     else:
                         l = None
-                    self.add_link(f, t, -b, d, l)
-                    self.add_link(t, f, a, d, l)
+                    if self.use_last and l is not None \
+                       and b < l and l < a:
+                        b = l
+                        a = l
+                    self.add_link(f, t, -b)
+                    self.add_link(t, f, a)
                     if (f, t) in self.trade:
                         trade = self.trade[(f, t)]
                         self.add_link(f, t, -v, d, l)
@@ -183,5 +184,8 @@ if __name__ == '__main__':
             print("Loading: ", i)
             cd.load([csvfile])
     cycles = cd.run()
-    cycles.sort(key=lambda a: -a[1]) 
+    cycles.sort(key=lambda a: -a[1])
+    import time
+    print(time.strftime("%Y-%m-%d %H:%M:%S"))
+    print()
     print(cd.format(cycles, 2))
