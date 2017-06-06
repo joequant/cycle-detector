@@ -7,7 +7,7 @@ from graphviz import Digraph
 from cyclefind import CycleFind
 
 class CycleDetect(object):
-    def __init__(self, use_last=True):
+    def __init__(self, use_last=False):
         self.reset()
         self.use_last = use_last
 
