@@ -8,13 +8,7 @@ from graphviz import Digraph
 from cyclefind import CycleFind
 
 class CycleDetect(object):
-    def __init__(self, use_last=[("BTC:*", "USD:*"),
-                                 ("USD:*", "BTC:*"),
-                                 ("BTC:*", "EUR:*"),
-                                 ("EUR:*", "BTC:*"),
-                                 ("ETH:*", "USD:*"),
-                                 ("USD:*", "ETH:*"),
-                                 ], threshold=1.5):
+    def __init__(self, use_last=[], threshold=1.5):
         self.reset()
         self.use_last = use_last
         self.threshold = threshold
@@ -99,10 +93,10 @@ class CycleDetect(object):
                     self.add_link(f, t, -b)
                     self.add_link(t, f, a)
                     if (f, t) in self.trade:
-                        trade = self.trade[(f, t)]
+                        (v, d, l) = self.trade[(f, t)]
                         self.add_link(f, t, -v, d, l)
                     elif (t, f) in self.trade:
-                        trade = self.trade[(t, f)]
+                        (v, d, l) = self.trade[(t, f)]
                         self.add_link(t, f, -v, d, l)
                 elif lformat == 'trade':
                     f = row[1]
