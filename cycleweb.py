@@ -17,6 +17,14 @@ def root():
     return flask.send_from_directory('cycleweb-react/build',
                                      'index.html')
 
+@app.route("/static-repeat/<path:filename>")
+def static_repeat(filename):
+    print(filename)
+    response = flask.send_from_directory('cycleweb-react/build/static',
+                                       filename)
+    response.headers['Refresh'] = 15
+    return response
+
 @app.route("/cycle", methods=['GET', 'POST'])
 def cycle():
     if request.method == 'POST':
