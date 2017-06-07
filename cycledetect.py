@@ -2,12 +2,19 @@
 import csv
 import sys
 import math
+import fnmatch
 from collections import OrderedDict
 from graphviz import Digraph
 from cyclefind import CycleFind
 
 class CycleDetect(object):
-    def __init__(self, use_last=False, threshold=1.5):
+    def __init__(self, use_last=[("BTC:*", "USD:*"),
+                                 ("USD:*", "BTC:*"),
+                                 ("BTC:*", "EUR:*"),
+                                 ("EUR:*", "BTC:*"),
+                                 ("ETH:*", "USD:*"),
+                                 ("USD:*", "ETH:*"),
+                                 ], threshold=1.5):
         self.reset()
         self.use_last = use_last
         self.threshold = threshold
@@ -19,6 +26,13 @@ class CycleDetect(object):
         self.limit = OrderedDict()
         self.trade = OrderedDict()
         self.cyclelimit = None
+
+    def check_use_last(self,f,t):
+        for i in self.use_last:
+            if fnmatch.fnmatch(f, i[0]) and \
+               fnmatch.fnmatch(t, i[1]):
+                return True
+        return False
 
     def add_link(self, f, t, v, d=None, l=None):
         if f not in self.graph:
@@ -61,6 +75,10 @@ class CycleDetect(object):
                     self.add_link(f, t, v)
                 elif lformat == 'cycle-limit':
                     self.cyclelimit = int(row[1])
+                elif lformat == 'use-last':
+                    self.use_last.append((row[1], row[2]))
+                elif lformat == 'threshold':
+                    self.threshold = float(row[1])
                 elif lformat == 'node':
                     f = row[1]
                     if f not in self.graph:
@@ -74,7 +92,7 @@ class CycleDetect(object):
                         l = math.log(float(row[5]))
                     else:
                         l = None
-                    if self.use_last and l is not None \
+                    if self.check_use_last(f,t) and l is not None \
                        and b < l and l < a:
                         b = l
                         a = l
