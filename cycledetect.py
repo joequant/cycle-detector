@@ -7,9 +7,10 @@ from graphviz import Digraph
 from cyclefind import CycleFind
 
 class CycleDetect(object):
-    def __init__(self, use_last=False):
+    def __init__(self, use_last=False, threshold=1.5):
         self.reset()
         self.use_last = use_last
+        self.threshold = threshold
 
     def reset(self):
         self.graph = OrderedDict()
@@ -164,11 +165,11 @@ class CycleDetect(object):
             retval.append([i1, math.exp(total), d, l])
         return retval
 
-    def format(self, cycle_list, threshold = 0.0):
+    def format(self, cycle_list):
         retval = ''
         for i in cycle_list:
             percent = (i[1] - 1.0) * 100
-            if percent > threshold:
+            if percent > self.threshold:
                 retval += " -> ".join(i[0]) + "\n"
                 retval += "Expected return: " + str(percent) + "\n"
                 retval += "Delay: " + str(i[2]) + "\n"
@@ -178,7 +179,7 @@ class CycleDetect(object):
         return retval
 
 if __name__ == '__main__':
-    cd = CycleDetect()
+    cd = CycleDetect(threshold=1.5)
     for i in sys.argv[1:]:
         with open(i, 'r') as csvfile:
             print("Loading: ", i)
@@ -188,4 +189,4 @@ if __name__ == '__main__':
     import time
     print(time.strftime("%Y-%m-%d %H:%M:%S"))
     print()
-    print(cd.format(cycles, 2))
+    print(cd.format(cycles))
