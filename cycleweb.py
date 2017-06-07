@@ -22,7 +22,7 @@ def static_repeat(filename):
     print(filename)
     response = flask.send_from_directory('cycleweb-react/build/static',
                                        filename)
-    response.headers['Refresh'] = 15
+    response.headers['Refresh'] = 5
     return response
 
 @app.route("/cycle", methods=['GET', 'POST'])
