@@ -80,18 +80,25 @@ class CycleDetect(object):
                 elif lformat == 'bid-ask':
                     f = row[1]
                     t = row[2]
-                    b = math.log(float(row[3]))
-                    a = math.log(float(row[4]))
+                    bval = float(row[3])
+                    if bval <= 0.0:
+                        bval = None
+                    aval = float(row[4])
+                    if aval <= 0.0:
+                        aval = None
                     if len(row) > 5 and row[5] != "":
-                        l = math.log(float(row[5]))
+                        lval = float(row[5])
                     else:
-                        l = None
-                    if self.check_use_last(f,t) and l is not None \
-                       and b < l and l < a:
-                        b = l
-                        a = l
-                    self.add_link(f, t, -b)
-                    self.add_link(t, f, a)
+                        lval = None
+                    if self.check_use_last(f,t) and lval is not None \
+                           and (bval is None or bval < lval) \
+                           and (aval is None or lval < aval):
+                        bval = lval
+                        aval = lval
+                    if bval is not None:
+                        self.add_link(f, t, -math.log(bval))
+                    if aval is not None:
+                        self.add_link(t, f, math.log(aval))
                     if (f, t) in self.trade:
                         (v, d, l) = self.trade[(f, t)]
                         self.add_link(f, t, -v, d, l)
