@@ -1,4 +1,5 @@
 #!/bin/sh
+./cycleweb.py &
 while true;
 do
 ../bitcoin-price-api/scripts/dumpprices.py > prices.csv
