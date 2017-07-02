@@ -197,9 +197,16 @@ class CycleDetect(object):
                 retval += "\n"
         return retval
 
-if __name__ == '__main__':
+def main():
+    import argparse, os
+    parser = argparse.ArgumentParser(description='Detect loops')
+    parser.add_argument('--dir')
+    args, unknown_args = parser.parse_known_args()
+    if args.dir is not None:
+        print("Directory", args.dir)
+        os.chdir(args.dir)
     cd = CycleDetect(threshold=1.5)
-    for i in sys.argv[1:]:
+    for i in unknown_args:
         with open(i, 'r') as csvfile:
             print("Loading: ", i)
             cd.load([csvfile])
@@ -209,3 +216,6 @@ if __name__ == '__main__':
     print(time.strftime("%Y-%m-%d %H:%M:%S"))
     print()
     print(cd.format(cycles))
+
+if __name__ == '__main__':
+    main()
