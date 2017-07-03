@@ -3,6 +3,7 @@ import csv
 import sys
 import math
 import fnmatch
+import os
 from collections import OrderedDict
 from graphviz import Digraph
 from cyclefind import CycleFind
@@ -12,6 +13,7 @@ class CycleDetect(object):
         self.reset()
         self.use_last = use_last
         self.threshold = threshold
+        self.files_loaded = []
 
     def reset(self):
         self.graph = OrderedDict()
@@ -47,6 +49,17 @@ class CycleDetect(object):
                 self.limit[f][t] = l
             else:
                 self.limit[f][t] = min(self.limit[f][t], l)
+
+    def load_file(self, filelist):
+        for i in filelist:
+            abspath = os.path.abspath(i)
+            if abspath in self.files_loaded:
+                continue
+            else:
+                with open(i, 'r') as csvfile:
+                    print("Loading: ", i)
+                    self.files_loaded.append(abspath)
+                    self.load([csvfile])
 
     def load(self, fplist):
         tfee = []
@@ -135,6 +148,9 @@ class CycleDetect(object):
                     else:
                         l = None
                     self.add_link(f, t, -v, d, l)
+                elif lformat == 'include':
+                    file = row[1]
+                    self.load_file([file])
 
     def graphviz(self, fp=None):
         if fp is not None:
@@ -206,10 +222,7 @@ def main():
         print("Directory", args.dir)
         os.chdir(args.dir)
     cd = CycleDetect(threshold=1.5)
-    for i in unknown_args:
-        with open(i, 'r') as csvfile:
-            print("Loading: ", i)
-            cd.load([csvfile])
+    cd.load_file(unknown_args)
     cycles = cd.run()
     cycles.sort(key=lambda a: -a[1])
     import time
